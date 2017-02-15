@@ -63,7 +63,7 @@ pointingCallback(void *context, TimeStamp::inttime timestamp,
 
     /* process output data with:
 
-     cat datapoints.dat | sed "/.* 0\.000000/d" | sort -g | uniq -f 1 > datapoints-sorted.dat 
+         cat datapoints.dat | sed "/.* 0\.000000/d" | sort -g | uniq -f 1 > datapoints-sorted.dat
      */
 
     last_time = timestamp;
