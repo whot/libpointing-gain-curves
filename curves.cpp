@@ -86,12 +86,10 @@ main(int argc, char** argv) {
              now.refresh())
             PointingDevice::idle(500);
 
-        std::cout << std::endl << "Pointing device" << std::endl;
-        std::cout << "  " << input->getURI(true).asString() << std::endl
-        << "  " << input->getResolution() << " CPI, "
-        << input->getUpdateFrequency() << " Hz" << std::endl
-        << "  device is " << (input->isActive()?"":"not ") << "active" << std::endl
-        << std::endl;
+        printf("# Pointing device: %s cpi %d@%dHz\n",
+               input->getURI(true).asString().c_str(),
+               input->getResolution(),
+               input->getUpdateFrequency());
 
         // --- Display device -----------------------------------------------------
 
@@ -101,20 +99,18 @@ main(int argc, char** argv) {
         output->getResolution(&hdpi, &vdpi);
         DisplayDevice::Size size = output->getSize();
         DisplayDevice::Bounds bounds = output->getBounds();
-        std::cout << std::endl << "Display device" << std::endl
-        << "  " << output->getURI(true).asString() << std::endl
-        << "  " << bounds.size.width << " x " << bounds.size.height << " pixels, "
-        << size.width << " x " << size.height << " mm" << std::endl
-        << "  " << hdpi << " x " << vdpi << " PPI, "
-        << output->getRefreshRate() << " Hz" << std::endl;
+
+        printf("# Display device: %s %dppi %dx%d\n",
+               hdpi,
+               output->getURI(true).asString().c_str(),
+               bounds.size.width, bounds.size.height);
 
         // --- Transfer function --------------------------------------------------
 
         func = TransferFunction::create(argc>3?argv[3]:"sigmoid:?debugLevel=2", input, output);
 
-        std::cout << std::endl << "Transfer function" << std::endl
-        << "  " << func->getURI(true).asString() << std::endl
-        << std::endl;
+        printf("# Transfer function: %s\n",
+               func->getURI(true).asString().c_str());
 
         // --- Ready to go --------------------------------------------------------
 
