@@ -31,19 +31,16 @@ pointingCallback(void *context, TimeStamp::inttime timestamp,
 
     double dt = (double)(timestamp - last_time)/TimeStamp::one_second;
     double cpi = input->getResolution();
-    double mm = hypot(25.4/cpi * input_dx, 25.4/cpi * input_dy); /* vector in mm */
+    /* Convert input deltas to mm */
+    double dx = 25.4/cpi * input_dx,
+           dy = 25.4/cpi * input_dy;
+    double mm = hypot(dx, dy); /* vector in mm */
     double speed = mm/dt; /* mm/s */
 
-    double gain_x = input_dx ? 1.0 * output_dx/input_dx : 0;
-    double gain_y = input_dy ? 1.0 * output_dy/input_dy : 0;
+    /* Note: gain includes the "mm to pixel" conversion, speed and gain are
+     * not in the same units */
+    double gain = hypot(output_dx, output_dy)/mm;
 
-    /* make sure the gain is the same in both directions. since we have
-     * doubles here, it should be fine, using func->applyi() gives uneven
-     * gain */
-    if (gain_x && gain_y) {
-        if (gain_x != gain_y)
-            printf("********************** gain mismatch ******************\n");
-    }
 
     double total_time = (double)(timestamp - first_time)/TimeStamp::one_second;
     mm_total += mm;
@@ -54,12 +51,12 @@ pointingCallback(void *context, TimeStamp::inttime timestamp,
            " total %f avg speed %f\n",
            dt * 1000, input_dx, input_dy, mm,
            output_dx, output_dy,
-           gain_x, speed, mm_total,
+           gain, speed, mm_total,
            speed_avg);
 #endif
 
     //printf("# speed(mm/s) gain\n");
-    printf("%f %f\n", speed, gain_x);
+    printf("%f %f\n", speed, gain);
 
     /* process output data with:
 
