@@ -8,32 +8,31 @@ gnuplot_file="plot-data.gnuplot"
 pids=""
 
 # $1 ... mouse cpi
-# $2 ... display ppi
+# $2 ... setting
 # $3 ... accel function
 # $4 ... output file
 run() {
     cpi="$1"
-    ppi="$2"
+    setting="$2"
     func="$3"
     outfile="$4"
 
-    ./curves "any:?cpi=$1" "dummy:?ppi=$2&hz=60&bw=1024&bh=768" "$3:" > $outfile &
+    ./curves "any:?cpi=$1" "dummy:" "$3:?setting=$setting" > $outfile &
 
     pids="$pids $!"
 }
 
-# xorg is buggy somehow, skip it
-funcs="osx windows"
-cpis="400 1000 2000"
-ppis="96 150 250"
+funcs="osx"
+cpis="400"
+settings="0 0.125 0.3125 0.5 0.6875 0.875 1 1.5 2 2.5 3"
 
 filenames=""
 
 for func in $funcs; do
     for cpi in $cpis; do
-        for ppi in $ppis; do
-            outfile="data-$func-cpi$cpi-ppi$ppi.dat"
-            run "$cpi" "$ppi" "$func" "$outfile"
+        for setting in $settings; do
+            outfile="data-$func-cpi$cpi-setting$setting.dat"
+            run "$cpi" "$setting" "$func" "$outfile"
             filenames="$filenames $outfile"
         done
     done
